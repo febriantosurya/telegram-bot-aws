@@ -26,6 +26,9 @@ jobs:
           cd list_ec2_resources
           terraform init
       - name: Apply Terraform to List Instances
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
         run: |
           cd list_ec2_resources
           terraform apply -auto-approve
