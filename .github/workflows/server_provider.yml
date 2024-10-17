@@ -30,7 +30,11 @@ jobs:
           AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           terraform apply -auto-approve
-          terraform output instance_ids
+          INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
+          echo "Instance IDs: $INSTANCE_IDS"
+          echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
+      - name: Show Instance IDs
+        run: echo "The following EC2 instances were found: ${{ env.instance_ids }}"
       # - name: Is Connected
       #   run: |
       #     echo "EC2 Class is ${{ inputs.class }}"
