@@ -27,11 +27,11 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_REGION: "ap-southeast-1"
         run: |
           terraform apply -auto-approve
-          INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
-          echo "Instance IDs: $INSTANCE_IDS"
+          # INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
+          # echo "Instance IDs: $INSTANCE_IDS"
       #     echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
       # - name: Show Instance IDs
       #   run: |
