@@ -1,7 +1,7 @@
 name: Server Auto Provisioner
 on: workflow_dispatch
 jobs:
-  Provision EC2:
+  Provision_EC2:
     runs-on: ubuntu-latest
     steps:
       - name: Is Connected
