@@ -1,13 +1,5 @@
-name: Server Auto Provisioner
-on: 
-  workflow_dispatch:
-    inputs:
-      class:
-        description: 'EC2 Instance Class'
-        required: true
-      type:
-        description: 'EC2 Instance Type'
-        required: true
+name: Server Listing
+on: workflow_dispatch
 jobs:
   Provision_EC2:
     environment: Telegram-Bot
@@ -40,12 +32,3 @@ jobs:
           else
             echo "The following EC2 instances were found: ${{ env.instance_ids }}"
           fi
-      
-      
-      
-      
-      
-      # - name: Is Connected
-      #   run: |
-      #     echo "EC2 Class is ${{ inputs.class }}"
-      #     echo "EC2 Type is ${{ inputs.type }}"
