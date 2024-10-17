@@ -30,16 +30,16 @@ jobs:
           AWS_REGION: "ap-southeast-1"
         run: |
           terraform apply -auto-approve
-          # INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
-          # echo "Instance IDs: $INSTANCE_IDS"
-      #     echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
-      # - name: Show Instance IDs
-      #   run: |
-      #     if [ -z "${{ env.instance_ids }}" ]; then
-      #       echo "No EC2 instances found."
-      #     else
-      #       echo "The following EC2 instances were found: ${{ env.instance_ids }}"
-      #     fi
+          INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
+          echo "Instance IDs: $INSTANCE_IDS"
+          echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
+      - name: Show Instance IDs
+        run: |
+          if [ -z "${{ env.instance_ids }}" ]; then
+            echo "No EC2 instances found."
+          else
+            echo "The following EC2 instances were found: ${{ env.instance_ids }}"
+          fi
       
       
       
