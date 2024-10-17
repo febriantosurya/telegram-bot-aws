@@ -19,17 +19,15 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"
-      - name: Configure AWS Credentials
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ env.AWS_REGION }}
-        run: echo "Credentials setup done"
       - name: Initialize Terraform
         working-directory: ./list_ec2_resources
         run: terraform init
       - name: Apply Terraform to List Instances
         working-directory: ./list_ec2_resources
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           terraform apply -auto-approve
           terraform output instance_ids
