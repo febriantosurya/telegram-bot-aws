@@ -34,7 +34,12 @@ jobs:
           echo "Instance IDs: $INSTANCE_IDS"
           echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
       - name: Show Instance IDs
-        run: echo "The following EC2 instances were found: ${{ env.instance_ids }}"
+        run: |
+          if [ -z "${{ env.instance_ids }}" ]; then
+            echo "No EC2 instances found."
+          else
+            echo "The following EC2 instances were found: ${{ env.instance_ids }}"
+          fi
       
       
       
