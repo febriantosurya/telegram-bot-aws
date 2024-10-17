@@ -1,12 +1,13 @@
 name: Server Auto Provisioner
-on: workflow_dispatch
-inputs:
-  class:
-    description: 'EC2 Instance Class'
-    required: true
-  type:
-    description: 'EC2 Instance Type'
-    required: true
+on: 
+  workflow_dispatch:
+    inputs:
+      class:
+        description: 'EC2 Instance Class'
+        required: true
+      type:
+        description: 'EC2 Instance Type'
+        required: true
 jobs:
   Provision_EC2:
     runs-on: ubuntu-latest
