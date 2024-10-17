@@ -29,6 +29,7 @@ jobs:
           terraform init
       - name: Apply Terraform to List Instances
         run: |
+          cd list_ec2_resources
           terraform apply -auto-approve
           terraform output instance_ids
       - name: Is Connected
