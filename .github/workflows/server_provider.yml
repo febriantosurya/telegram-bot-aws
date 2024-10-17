@@ -1,0 +1,8 @@
+name: Server Auto Provisioner
+on: workflow_dispatch
+jobs:
+  Provision EC2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Is Connected
+        run: echo "Run Successfully"
