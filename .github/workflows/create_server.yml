@@ -39,7 +39,7 @@ jobs:
           curl -X POST -H "Content-Type: application/json" \
           -d '{
             "chat_id":"${{inputs.chat_id}}",
-            "text":"Instance Created!\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
+            "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
             "parse_mode":"Markdown"
             }' \
           "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"

@@ -15,18 +15,18 @@ variable "instance_class" {
 
 provider "aws" {}
 
-# On-Demand Instance
-#resource "aws_instance" "server" {
-#  ami = "ami-03fa85deedfcac80b"
-#  instance_type = var.instance_class
-#  tags = {
-#    Name = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
-#  }
-#  subnet_id = "subnet-011fcaa2eba4610a3"
-#  vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
-#  associate_public_ip_address = true
-#  key_name = febri2023
-#}
+#On-Demand Instance
+resource "aws_instance" "server" {
+  ami = "ami-03fa85deedfcac80b"
+  instance_type = var.instance_class
+  tags = {
+    Name = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
+  }
+  subnet_id = "subnet-011fcaa2eba4610a3"
+  vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
+  associate_public_ip_address = true
+  key_name = febri2023
+}
 
 output "instance_public_ip" {
   value       = "0.0.0.0" #aws_instance.server.public_ip
