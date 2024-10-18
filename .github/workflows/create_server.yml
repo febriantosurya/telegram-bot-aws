@@ -30,8 +30,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "ap-southeast-1"
         run: terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
-        - name: Get Outputs
-          id: get_outputs
-          run: |
-            echo "Public IP: $(terraform output -raw instance_public_ip)"
-            echo "Instance Name: $(terraform output -raw instance_name)"
+      - name: Get Outputs
+        id: get_outputs
+        run: |
+          echo "Public IP: $(terraform output -raw instance_public_ip)"
+          echo "Instance Name: $(terraform output -raw instance_name)"
