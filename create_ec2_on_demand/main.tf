@@ -22,7 +22,7 @@ resource "aws_instance" "server" {
   tags = {
     Name = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
   }
-  vpc_security_group_ids=sg-07b0b8944d3dd1bff
+  vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
   associate_public_ip_address = true
 }
 
