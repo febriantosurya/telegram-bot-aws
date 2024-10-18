@@ -1,6 +1,10 @@
 name: Server Listing
 on: 
   workflow_dispatch:
+    inputs:
+      chat_id:
+        required: true
+        description: Chat ID Telegram
 jobs:
   Provision_EC2:
     environment: Telegram-Bot
@@ -26,10 +30,13 @@ jobs:
           INSTANCE_IDS=$(terraform output -json instance_ids | jq -r '.[]')
           echo "Instance IDs: $INSTANCE_IDS"
           echo "instance_ids=$INSTANCE_IDS" >> $GITHUB_ENV
-      - name: Show Instance IDs
+      - name: Send Instance IDs Info
         run: |
           if [ -z "${{ env.instance_ids }}" ]; then
-            echo "No EC2 instances found."
+            curl -X -H "Content-Type: application/json" \ 
+            POST "https://api.telegram.com/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage" \
+            -d '{"chat_id":"${{inputs.chat_id}}","text":"No EC2 Instance found", "parse_mode":"Markdown"}'
+            # echo "No EC2 instances found."
           else
             echo "The following EC2 instances were found: ${{ env.instance_ids }}"
           fi
