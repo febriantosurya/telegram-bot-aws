@@ -33,8 +33,9 @@ jobs:
       - name: Send Instance IDs Info
         run: |
           if [ -z "${{ env.instance_ids }}" ]; then
-            curl -X -H "Content-Type: application/json" \ 
-            POST "https://api.telegram.com/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage" \
+            curl -X POST \
+            -H "Content-Type: application/json" \ 
+            "https://api.telegram.com/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage" \
             -d '{"chat_id":"${{inputs.chat_id}}","text":"No EC2 Instance found", "parse_mode":"Markdown"}'
             # echo "No EC2 instances found."
           else
