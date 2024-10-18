@@ -35,5 +35,5 @@ jobs:
           if [ -z "${{ env.instance_ids }}" ]; then
             curl -X POST -H "Content-Type: application/json" -d '{"chat_id":"${{inputs.chat_id}}","text":"No EC2 Instance found", "parse_mode":"Markdown"}' "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
           else
-            echo "The following EC2 instances were found: ${{ env.instance_ids }}"
+            curl -X POST -H "Content-Type: application/json" -d '{"chat_id":"${{inputs.chat_id}}","text":"${{ env.instance_ids }}", "parse_mode":"Markdown"}' "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
           fi

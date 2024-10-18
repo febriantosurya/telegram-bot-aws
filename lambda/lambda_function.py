@@ -5,8 +5,10 @@ import requests
 from instance_type import EC2_INSTANCE_TYPES
 
 
-TOKEN = os.environ.get('TOKEN_TELEGRAM')
-if TOKEN is None:
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+
+if TELEGRAM_TOKEN is None:
     raise ValueError("Telegram bot token is not set in environment variables")
 
 http = urllib3.PoolManager()
@@ -23,17 +25,17 @@ def lambda_handler(event, context):
             url = "https://api.github.com/repos/febriantosurya/telegram-bot-aws/actions/workflows/list_server.yml/dispatches"
             headers = {
                 "Accept": "application/vnd.github+json",
-                "Authorization": "Bearer <token>",
-                "X-GitHub-Api-Version": "2022-11-28"
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "Content-Type": "application/json"
             }
             data = {
                 "ref": "master",
                 "inputs":{
-                    "chat_id": chat_id
+                    "chat_id": f"{chat_id}"
                 }
             }
-            
-            requests.post(url, headers=headers, json=data)
+            res = requests.post(url, headers=headers, json=data)
 
     elif 'callback_query' in body:
         # Handle the callback query
@@ -60,15 +62,15 @@ def send_ec2_keyboard(chat_id):
     }
 
     # Send the message with the inline keyboard
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     data = {
         'chat_id': chat_id,
         'text': "Choose an EC2 instance type to view details:",
         'reply_markup': json.dumps(keyboard)
     }
-    
-    encoded_data = json.dumps(data).encode('utf-8')
-    http.request('POST', url, body=encoded_data, headers={'Content-Type': 'application/json'})
+    requests.post(url, json=data)
+    # encoded_data = json.dumps(data).encode('utf-8')
+    # http.request('POST', url, body=encoded_data, headers={'Content-Type': 'application/json'})
 
 
 def send_instance_details(chat_id, instance_type):
@@ -90,7 +92,7 @@ def send_instance_details(chat_id, instance_type):
             response_text += f"- {pricing_type}: {price}\n"
         
         # send_message(chat_id, response_text)
-        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
         data = {
             'chat_id': chat_id,
             'text': response_text,
@@ -101,7 +103,7 @@ def send_instance_details(chat_id, instance_type):
         http.request('POST', url, body=encoded_data, headers={'Content-Type': 'application/json'})
     else:
         # send_message(chat_id, "Invalid option selected.")
-        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
         data = {
             'chat_id': chat_id,
             'text': "Invalid option selected.",
@@ -111,7 +113,7 @@ def send_instance_details(chat_id, instance_type):
         http.request('POST', url, body=encoded_data, headers={'Content-Type': 'application/json'})
 
 def send_message(chat_id, text):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     data = {
         'chat_id': chat_id,
         'text': text,
