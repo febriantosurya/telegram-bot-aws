@@ -6,7 +6,7 @@ on:
         required: true
         description: Chat ID Telegram
 jobs:
-  Provision_EC2:
+  List_EC2:
     environment: Telegram-Bot
     runs-on: ubuntu-latest
     steps:
