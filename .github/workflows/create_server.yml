@@ -24,6 +24,7 @@ jobs:
         working-directory: ./create_ec2_on_demand
         run: terraform init
       - name: Apply Terraform to List Instances
+        id: terraform_apply
         working-directory: ./create_ec2_on_demand
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -31,10 +32,14 @@ jobs:
           AWS_REGION: "ap-southeast-1"
         run: | 
           terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
-          terraform output -json instance_public_ip
-          echo "Public IP: $(terraform output -raw instance_public_ip)"
-          echo "Instance Name: $(terraform output -raw instance_name)"
-      # - name: Get Outputs
-      #   id: get_outputs
-      #   run: |
-          
+          echo "public_ip = $(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+          echo "instance_name = $(terraform output -raw instance_name)" >> $GITHUB_ENV
+      - name: Send Instance Info
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{
+            "chat_id":"${{inputs.chat_id}}",
+            "text":"Instance Created!\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
+            "parse_mode":"Markdown"
+            }' \
+          "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
