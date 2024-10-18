@@ -32,8 +32,8 @@ jobs:
           AWS_REGION: "ap-southeast-1"
         run: | 
           terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
-          echo "public_ip = $(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
-          echo "instance_name = $(terraform output -raw instance_name)" >> $GITHUB_ENV
+          echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+          echo "instance_name=$(terraform output -raw instance_name)" >> $GITHUB_ENV
       - name: Send Instance Info
         run: |
           curl -X POST -H "Content-Type: application/json" \
