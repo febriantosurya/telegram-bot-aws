@@ -26,9 +26,7 @@ resource "aws_spot_instance_request" "server" {
   subnet_id = "subnet-011fcaa2eba4610a3"
   vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
   key_name = "febri2023"
-	launch_specification {
-    associate_public_ip_address = true
-  }
+	associate_public_ip_address = true
 }
 
 output "instance_public_ip" {
