@@ -30,7 +30,7 @@ resource "aws_spot_instance_request" "server" {
 }
 
 data "aws_instance" "spot_instance" {
-  instance_id = aws_spot_instance_request.server.instance_id
+  instance_id = aws_spot_instance_request.server.spot_instance_id
 }
 
 output "instance_public_ip" {
