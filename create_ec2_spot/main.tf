@@ -27,6 +27,7 @@ resource "aws_spot_instance_request" "server" {
   vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
   key_name = "febri2023"
 	associate_public_ip_address = true
+	wait_for_fulfillment = true
 }
 
 output "instance_public_ip" {
@@ -35,6 +36,6 @@ output "instance_public_ip" {
 }
 
 output "instance_name" {
-  value       = aws_spot_instance_request.server.tags["Name"]
+  value       = aws_spot_instance_request.ser.tags["Name"]
   description = "Name of the EC2 instance"
 }
