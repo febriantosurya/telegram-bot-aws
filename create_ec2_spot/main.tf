@@ -36,6 +36,6 @@ output "instance_public_ip" {
 }
 
 output "instance_name" {
-  value       = aws_spot_instance_request.ser.tags["Name"]
+  value       = aws_spot_instance_request.server.tags["Name"]
   description = "Name of the EC2 instance"
 }
