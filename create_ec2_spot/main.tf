@@ -26,7 +26,7 @@ resource "aws_spot_instance_request" "server" {
 	associate_public_ip_address = true
 }
 
-resource "aws_tag" "server_tags" {
+resource "aws_ec2_tag" "server_tags" {
   resource_id = aws_spot_instance_request.server.spot_instance_id
   key         = "Name"
   value       = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
