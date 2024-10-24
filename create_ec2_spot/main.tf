@@ -15,21 +15,34 @@ variable "instance_class" {
 
 provider "aws" {}
 
-#Spot Instance
-resource "aws_spot_instance_request" "server" {
-  ami = "ami-03fa85deedfcac80b"
+resource "aws_launch_template" "server_template" {
+  name_prefix   = "telegram-bot"
+  image_id      = "ami-03fa85deedfcac80b"
   instance_type = var.instance_class
-	spot_type = "persistent"
-  subnet_id = "subnet-011fcaa2eba4610a3"
-  vpc_security_group_ids=["sg-07b0b8944d3dd1bff"]
-  key_name = "febri2023"
-	associate_public_ip_address = true
+  key_name      = "febri2023"
+
+  network_interfaces {
+    associate_public_ip_address = true
+    subnet_id                   = "subnet-011fcaa2eba4610a3"
+    security_groups             = ["sg-07b0b8944d3dd1bff"]
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
+    }
+  }
 }
 
-resource "aws_ec2_tag" "server_tags" {
-  resource_id = aws_spot_instance_request.server.spot_instance_id
-  key         = "Name"
-  value       = "Telegram-Bot-${formatdate("YYYYMMDD-HHmmss", timestamp())}"
+resource "aws_spot_instance_request" "server" {
+  launch_template {
+    id      = aws_launch_template.server_template.id
+    version = "$Latest"
+  }
+
+  spot_type = "persistent"
 }
 
 #data "aws_instance" "spot_instance" {
