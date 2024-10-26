@@ -1,0 +1,45 @@
+name: Create EC2 On-Demand
+on:
+  workflow_dispatch:
+    inputs:
+      class:
+        description: "Instance Family Type e.g t2.micro"
+        required: true
+        default: t2.micro
+      chat_id:
+        required: true
+        description: "Chat ID Telegram"
+jobs: 
+  Create_On-Demand_Instance:
+    environment: Telegram-Bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+      - name: Initialize Terraform
+        working-directory: ./create_ec2_on_demand
+        run: terraform init
+      - name: Apply Terraform to List Instances
+        id: terraform_apply
+        working-directory: ./create_ec2_on_demand
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-southeast-1"
+        run: | 
+          terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
+          echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+          echo "instance_name=$(terraform output -raw instance_name)" >> $GITHUB_ENV
+      - name: Send Instance Info
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{
+            "chat_id":"${{inputs.chat_id}}",
+            "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
+            "parse_mode":"Markdown"
+            }' \
+          "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
