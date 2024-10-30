@@ -65,14 +65,24 @@ def list_ec2_servers(tele_token, chat_id):
 	instance_info = ""
 	ec2 = boto3.client('ec2')
 	response = ec2.describe_instances()
+	count = 0
 	for reservation in response['Reservations']:
 		for instance in reservation['Instances']:
+			count += 1
 			public_ip = instance.get('PublicIpAddress', None)
 			instance_name = (instance.get('Tags', [{}])[0].get('Value', 'Unnamed Instance'))
+			spot_id = instance.get('SpotInstanceRequestId', None)
+			instance_id = instance.get('InstanceId', None)
 			if public_ip:
-					instance_info += f"- {instance_name} ({public_ip}) > {instance['State']['Name']} \n"
+				if spot_id:
+					instance_info += f"{count}. _(`{spot_id}`)_-{instance_name} ({public_ip}) > {instance['State']['Name']} \n"
+				else:
+					instance_info += f"{count}. _(`{instance_id}`)_-{instance_name} ({public_ip}) > {instance['State']['Name']} \n"
 			else:
-					instance_info += f"- {instance_name} (No Public IP) > {instance['State']['Name']} \n"
+				if spot_id:
+					instance_info += f"{count}. _(`{spot_id}`)_-{instance_name} (No Public IP) > {instance['State']['Name']} \n"
+				else:
+					instance_info += f"{count}. _(`{instance_id}`)_-{instance_name} (No Public IP) > {instance['State']['Name']} \n"
 
 	url = f"https://api.telegram.org/bot{tele_token}/sendMessage"
 	if instance_info == "":

@@ -7,15 +7,8 @@ terraform {
 	}
 }
 
-variable "instance_class" {
-  description = "The type of the EC2 instance"
-  type        = string
-  default     = "t2.micro"
-}
-
 provider "aws" {}
 
-#Spot Instance
 resource "aws_spot_instance_request" "server" {
   ami = "ami-03fa85deedfcac80b"
   instance_type = var.instance_class
@@ -28,14 +21,4 @@ resource "aws_spot_instance_request" "server" {
   key_name = "febri2023"
 	associate_public_ip_address = true
 	wait_for_fulfillment = true
-}
-
-output "instance_public_ip" {
-  value       = aws_spot_instance_request.server.public_ip
-  description = "Public IP of the EC2 instance"
-}
-
-output "instance_name" {
-  value       = aws_spot_instance_request.server.tags["Name"]
-  description = "Name of the EC2 instance"
 }
