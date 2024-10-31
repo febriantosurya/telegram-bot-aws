@@ -28,7 +28,8 @@ jobs:
       - name: Update instance list file
         working-directory: ./create_ec2_spot
         run: |
-          git clone --depth 1 https://${{ secrets.GH_TOKEN }}:/x-oauth-basic@github.com/febriantosurya/telegram-bot-aws-state.git .
+          git clone --depth 1 https://${{ secrets.GH_TOKEN }}:/x-oauth-basic@github.com/febriantosurya/telegram-bot-aws-state.git temp
+          mv temp/* . && rmdir temp
           ls 
       #     echo "${{ inputs.instance_name }}" >> spot.txt
       #     cat spot.txt
