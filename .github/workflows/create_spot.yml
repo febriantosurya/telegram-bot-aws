@@ -59,7 +59,7 @@ jobs:
           curl -X POST -H "Content-Type: application/json" \
           -d '{
             "chat_id":"${{inputs.chat_id}}",
-            "text":"${{env.instance_public_ips}}",
+            "text":"${{env.public_ips}}",
             "parse_mode":"Markdown"
             }' \
           "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
