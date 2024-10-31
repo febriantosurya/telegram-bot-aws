@@ -30,18 +30,22 @@ jobs:
         run: |
           git clone --depth 1 https://${{ secrets.GH_TOKEN }}@github.com/febriantosurya/telegram-bot-aws-state.git temp
           mv temp/* . && rm -r temp
-          ls 
-      #     echo "${{ inputs.instance_name }}" >> spot.txt
-      #     cat spot.txt
-      # - name: Commit changes
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      #   run: |
-      #     git config --global user.name "febriantosurya"
-      #     git config --global user.email "febriantosurya5@gmail.com"
-      #     git add create_ec2_spot/spot.txt
-      #     git commit -m "Add new instance ${{ inputs.instance_name }}"
-      #     git push origin master
+          [ -f "terraform.tfstate" ] && echo "Skipping terraform init." || (terraform init)
+          echo "${{ inputs.instance_name }}" >> spot.txt
+          echo "Horo" >> terraform.tfstate
+      - name: Commit changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name "febriantosurya"
+          git config --global user.email "febriantosurya5@gmail.com"
+          git add create_ec2_spot/spot.txt
+          git commit -m "Add new instance ${{ inputs.instance_name }}"
+          git push origin master
+          git remote set-url https://$GITHUB_TOKEN@github.com/febriantosurya/telegram-bot-aws-state.git
+          git add create_ec2_spot/terraform.tfstate
+          git commit -m "Add new instance ${{ inputs.instance_name }}"
+          git push origin master
       # - name: Initialize Terraform
       #   working-directory: ./create_ec2_spot
       #   run: terraform init
