@@ -61,7 +61,7 @@ jobs:
           curl -X POST -H "Content-Type: application/json" \
           -d '{
             "chat_id":"${{inputs.chat_id}}",
-            "text":"Spot EC2\n- Name: $instance_name\n- IP: $ip",
+            "text":"Spot EC2\n- Name: '"$instance_name"'\n- IP: '"$ip"'",
             "parse_mode":"Markdown"
             }' \
           "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
