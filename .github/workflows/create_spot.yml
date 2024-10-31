@@ -44,7 +44,7 @@ jobs:
           AWS_REGION: "ap-southeast-1"
         run: | 
           terraform apply -auto-approve
-          echo "public_ips=$(terraform output -raw instance_public_ips)" >> $GITHUB_ENV
+          echo "public_ips=$(terraform output -json instance_public_ips)" >> $GITHUB_ENV
       - name: Save Changes
         working-directory: ./create_ec2_spot
         env:
@@ -56,7 +56,8 @@ jobs:
           aws s3 cp terraform.tfstate s3://telegram-aws-bot-s3/spot/terraform.tfstate
       - name: Send Instance Info
         run: |
-          public_ips="${{ env.public_ips//\\n/$'\n' }}"
+          instance_name="${{ inputs.instance_name }}"
+          ip=$(echo "${{ env.public_ips }}" | jq -r --arg name "$instance_name" '.[$name]')
           curl -X POST -H "Content-Type: application/json" \
           -d '{
             "chat_id":"${{inputs.chat_id}}",
