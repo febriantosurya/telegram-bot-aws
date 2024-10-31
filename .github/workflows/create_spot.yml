@@ -33,7 +33,7 @@ jobs:
           AWS_REGION: "ap-southeast-1"
         run: |
           aws s3 cp s3://telegram-aws-bot-s3/spot/ . --recursive
-          [ -f "terraform.tfstate" ] && echo "Skipping terraform init." || terraform init
+          terraform init
           echo "${{ inputs.instance_name }},${{ inputs.class }}" >> spot.txt
       - name: Apply Terraform to List Instances
         id: terraform_apply
