@@ -9,6 +9,9 @@ on:
       chat_id:
         required: true
         description: "Chat ID Telegram"
+      instance_name:
+        required: true
+        description: "Tag for new instance"
 jobs: 
   Create_Spot_Instance:
     environment: Telegram-Bot
@@ -20,26 +23,40 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"
-      - name: Initialize Terraform
+      - name: Update instance list file
         working-directory: ./create_ec2_spot
-        run: terraform init
-      - name: Apply Terraform to List Instances
-        id: terraform_apply
-        working-directory: ./create_ec2_spot
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-southeast-1"
-        run: | 
-          terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
-          echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
-          echo "instance_name=$(terraform output -raw instance_name)" >> $GITHUB_ENV
-      - name: Send Instance Info
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{
-            "chat_id":"${{inputs.chat_id}}",
-            "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
-            "parse_mode":"Markdown"
-            }' \
-          "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
+          echo "${{ inputs.instance_name }}" >> spot.txt
+          cat spot.txt
+      - name: Commit changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name "febriantosurya"
+          git config --global user.email "febriantosurya5@gmail.com"
+          git add create_ec2_spot/spot.txt
+          git commit -m "Add new instance ${{ inputs.instance_name }}"
+          git push origin master
+      # - name: Initialize Terraform
+      #   working-directory: ./create_ec2_spot
+      #   run: terraform init
+      # - name: Apply Terraform to List Instances
+      #   id: terraform_apply
+      #   working-directory: ./create_ec2_spot
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_REGION: "ap-southeast-1"
+      #   run: | 
+      #     terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
+      #     echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+      #     echo "instance_name=$(terraform output -raw instance_name)" >> $GITHUB_ENV
+      # - name: Send Instance Info
+      #   run: |
+      #     curl -X POST -H "Content-Type: application/json" \
+      #     -d '{
+      #       "chat_id":"${{inputs.chat_id}}",
+      #       "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
+      #       "parse_mode":"Markdown"
+      #       }' \
+      #     "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
