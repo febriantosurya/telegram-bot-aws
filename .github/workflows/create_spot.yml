@@ -12,6 +12,8 @@ on:
       instance_name:
         required: true
         description: "Tag for new instance"
+permissions:
+  contents: write
 jobs: 
   Create_Spot_Instance:
     environment: Telegram-Bot
