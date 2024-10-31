@@ -56,10 +56,11 @@ jobs:
           aws s3 cp terraform.tfstate s3://telegram-aws-bot-s3/spot/terraform.tfstate
       - name: Send Instance Info
         run: |
+          public_ips="${{ env.public_ips//\\n/$'\n' }}"
           curl -X POST -H "Content-Type: application/json" \
           -d '{
             "chat_id":"${{inputs.chat_id}}",
-            "text":"${{env.public_ips//\\n/$'\n'}}",
+            "text":"'"$public_ips"'",
             "parse_mode":"Markdown"
             }' \
           "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
