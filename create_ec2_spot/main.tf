@@ -1,5 +1,5 @@
 locals {
-  lines = split("\n", trim(file("spot_name.txt"), " \t\n"))
+  lines = split("\n", trim(file("spot.txt"), " \t\n"))
   spots = [
     for line in local.lines : {
       name = split(",", line)[0]
@@ -30,9 +30,4 @@ resource "aws_spot_instance_request" "server" {
 	associate_public_ip_address = true
   tags = { Name = each.value.name }
 	wait_for_fulfillment = true
-}
-
-output "instance_public_ips" {
-  value = { for name, instance in aws_spot_instance_request.server : name => instance.public_ip }
-  description = "Public IPs of the EC2 spot instances"
 }

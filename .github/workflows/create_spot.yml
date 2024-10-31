@@ -43,9 +43,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "ap-southeast-1"
         run: | 
-          terraform apply -var="instance_class=${{inputs.class}}" -auto-approve
-          echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
-          echo "instance_name=$(terraform output -raw instance_name)" >> $GITHUB_ENV
+          terraform apply -auto-approve
+          echo "public_ip=$(terraform output -raw instance_public_ips)" >> $GITHUB_ENV
       - name: Save Changes
         working-directory: ./create_ec2_spot
         env:
@@ -55,12 +54,12 @@ jobs:
         run: |
           aws s3 cp spot.txt s3://telegram-aws-bot-s3/spot/spot.txt
           aws s3 cp terraform.tfstate s3://telegram-aws-bot-s3/spot/terraform.tfstate
-      - name: Send Instance Info
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{
-            "chat_id":"${{inputs.chat_id}}",
-            "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
-            "parse_mode":"Markdown"
-            }' \
-          "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
+      # - name: Send Instance Info
+      #   run: |
+      #     curl -X POST -H "Content-Type: application/json" \
+      #     -d '{
+      #       "chat_id":"${{inputs.chat_id}}",
+      #       "text":"Instance Created!\n\nInstance name: ${{env.instance_name}}\nIP: ${{env.public_ip}}",
+      #       "parse_mode":"Markdown"
+      #       }' \
+      #     "https://api.telegram.org/bot${{secrets.TELEGRAM_TOKEN}}/sendMessage"
